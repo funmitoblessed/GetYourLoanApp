@@ -111,7 +111,7 @@ function loadApplication() {
 
         var riskLabel = document.getElementById("riskSummary");
         riskLabel.style.display = "block";
-        riskLabel.innerText = generateRickProfile(la); 
+        riskLabel.innerHTML = generateRickProfile(la); 
 
     }
 }
@@ -339,9 +339,9 @@ function generateRickProfile(la) {
     var reviewText = "";
 
     if (age < 18) {
-        reviewText = "your application will not be reviewed, because you have to be 18 years or older.";
+        reviewText = "will not be reviewed, because you have to be 18 years or older.";
     } else {
-        reviewText = "your application will be reviewed.";
+        reviewText = "will be reviewed.";
     }
 
     var riskProfile = "";
@@ -356,10 +356,32 @@ function generateRickProfile(la) {
         riskProfile = "high";
     }
 
-    var summaryText = "Dear " + la.ApplicantName + ", " + reviewText + " Your risk profile is " + riskProfile;
+    var summaryText = String.raw `Dear ${la.ApplicantName}
+    your application for ${"₦" + la.LoanAmount} ${reviewText}
+    Your risk profile is ${riskProfile}
+    Your unique application code is \t${createApplicationId()}`
 
     return summaryText;
 }
 
+// function to highlight some important text in result
+function highlightText(strings, ...values){
+    let str = "";
+    for (var i = 0; i < strings.raw.length; i++){
+        if (i > 0){
+            str += `<b>${values[i-1]}</b>`
+        }
+        str += strings.raw[i];
+    }
+    return str;
+}
 
-
+function createApplicationId() {
+    var result = "";
+    var characters = "ABCDEUVYZabcdrswxyz01789/\\#@$%()*^!";
+    var charactersLength = characters.length;
+    for (var i = 0; i < 8; i++) {
+        result += characters.charAt(Math.floor(Math.random() * charactersLength))
+    }
+    return result;
+}
